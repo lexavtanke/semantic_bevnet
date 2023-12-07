@@ -26,16 +26,20 @@ COPY environment.yml .
 
 RUN conda env update --file environment.yml --prune
 
+ENV TORCH_CUDA_ARCH_LIST="8.0"
+# ENV TORCH_CUDA_ARCH_LIST="7.0 7.2 7.5 8.0 8.6+PTX"
 
 
 RUN git clone https://github.com/traveller59/spconv.git --recursive \
     && cd spconv \
     && git checkout fad3000249d27ca918f2655ff73c41f39b0f3127 \
-    && git submodule update \
-    && unset TORCH_CUDA_ARCH_LIST \
-    && export TORCH_CUDA_ARCH_LIST="8.0" \
-    && python setup.py bdist_wheel \
-    && cd dist && pip install *.whl
+    && git submodule update 
+    # && python setup.py bdist_wheel \
+    # && cd dist && pip install *.whl
 
 ENV PYTHONPATH "$PYTHONPATH:/workspace/semantic_bevnet/bevnet"
 ENV PYTHONPATH "$PYTHONPATH:/workspace/spconv/spconv"
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
