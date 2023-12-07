@@ -130,3 +130,6 @@ dmypy.json
 
 # datafiles
 data/
+
+# model files
+*.pth.*
